@@ -8,13 +8,13 @@ RUN corepack enable
 WORKDIR /app
 
 # Copy package.json and pnpm-lock.yaml from the host to the container
-COPY ./server/package.json ./server/pnpm-lock.yaml .
+COPY ./server/package.json ./server/pnpm-lock.yaml ./
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
 # Copy the rest of the application files
-COPY ./server/* .
+COPY ./server/* ./
 
 # Expose the port
 EXPOSE 3000
