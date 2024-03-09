@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SplitED
 // @namespace    violentmonkey
-// @version      1.2
+// @version      1.3
 // @description  SplitED
 // @author       violentmonkey
 // @match        https://edstem.org/*
@@ -59,7 +59,9 @@ function createWs() {
         if (currentPage != location.href)
         {
             currentPage = location.href;
-            pageCheck();
+            waitForElm('.disrep-actions-buttons').then((elm) => {
+                pageCheck();
+            });
         }
     }, 500);
     
