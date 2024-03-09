@@ -8,10 +8,6 @@
 // @grant        none
 // ==/UserScript==
 
-console.log('coucou');
-console.log('test');
-console.log('test2');
-
 function waitForElm(selector) {
     return new Promise(resolve => {
         if (document.querySelector(selector)) {
@@ -25,7 +21,6 @@ function waitForElm(selector) {
             }
         });
 
-        // If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
         observer.observe(document.body, {
             childList: true,
             subtree: true
