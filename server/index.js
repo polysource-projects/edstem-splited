@@ -52,3 +52,7 @@ wss.on('connection', async function connection(ws) {
         data: await getClaimedThreads()
     }));
 });
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
