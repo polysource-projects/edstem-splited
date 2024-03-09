@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SplitED
 // @namespace    violentmonkey
-// @version      1.1
+// @version      1.2
 // @description  SplitED
 // @author       violentmonkey
 // @match        https://edstem.org/*
@@ -51,7 +51,6 @@ function createWs() {
         }
     }
     
-    let lastPageUrl = window.location.href;
     let currentPage = location.href;
     
     // listen for changes
@@ -69,6 +68,10 @@ function createWs() {
         const regex = /edstem.org\/eu\/courses\/([0-9]+)\/discussion\/([0-9]+)/;
         if (!regex.test(currentPage)) return;
         const match = currentPage.match(regex);
+        if (!match) {
+            console.log(window.location.href);
+            return;
+        }
         const courseId = match[1];
         const threadId = match[2];
         console.log(`Course ID: ${courseId}, Thread ID: ${threadId}`);
