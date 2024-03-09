@@ -1,43 +1,43 @@
-import { Database } from "duckdb-async";
 import { extractDisplayNameFromEPFLEmail } from './util.js';
+import { Sequelize, DataTypes } from 'sequelize';
 
-let db;
+let sequelize;
+let ClaimedThread;
 
-async function initDatabase() {
-    db = await Database.create("./db1");
-    // check if the table exists
-    // there should be a unique constraint on the threadId
-    await db.run(`
-        CREATE TABLE IF NOT EXISTS claimed_threads (
-            threadId INTEGER PRIMARY KEY,
-            userEmail TEXT,
-            userDisplayName TEXT
-        );
-    `);
+export async function initDatabase() {
+    sequelize = new Sequelize({
+        dialect: 'postgres',
+        host: process.env.DB_HOST,
+        username: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME
+    });
+    ClaimedThread = sequelize.define('ClaimedThread', {
+        threadId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            primaryKey: true
+        },
+        userEmail: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        userDisplayName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        }
+    });
+    await sequelize.sync();
 }
 
-initDatabase();//.then(() => insertDummyThreads());
-
 export function createClaimedThread(threadId, userEmail, userDisplayName) {
-    return db.run(`INSERT INTO claimed_threads (threadId, userEmail, userDisplayName) VALUES (${threadId}, '${userEmail}', '${userDisplayName}');`);
+    return ClaimedThread.create({ threadId, userEmail, userDisplayName });
 }
 
 export function deleteClaimedThread(threadId) {
-    return db.run(`DELETE FROM claimed_threads WHERE threadId = ${threadId}`);
-}
-
-function insertDummyThreads() {
-    createClaimedThread(94394, 'simon.manu@epfl.ch', extractDisplayNameFromEPFLEmail('simon.lefort@epfl.ch'));
+    return ClaimedThread.destroy({ where: { threadId } });
 }
 
 export function getClaimedThreads() {
-    return new Promise((resolve, reject) => {
-        db.all(`SELECT * FROM claimed_threads`, function (err, res) {
-            if (err) {
-                console.error(err);
-                return [];
-            }
-            resolve(res);
-        });
-    });
+    return ClaimedThread.findAll();
 }

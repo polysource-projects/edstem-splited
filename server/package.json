@@ -13,8 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/cors": "^9.0.1",
-    "duckdb": "^0.10.0",
-    "duckdb-async": "^0.10.0",
     "fastify": "^4.26.2",
     "ws": "^8.16.0"
   }

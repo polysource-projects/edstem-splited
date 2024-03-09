@@ -11,7 +11,6 @@
 console.log('coucou');
 console.log('test');
 console.log('test2');
-// create a new ws connection on port 8080
 
 function waitForElm(selector) {
     return new Promise(resolve => {
@@ -34,7 +33,7 @@ function waitForElm(selector) {
     });
 }
 
-const ws = new WebSocket('ws://localhost:8080');
+const ws = new WebSocket('ws://localhost:3000');
 
 ws.onopen = function open() {
     ws.send(JSON.stringify({

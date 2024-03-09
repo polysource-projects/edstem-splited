@@ -1,6 +1,11 @@
+import { config } from 'dotenv';
+config();
+
 import { WebSocketServer, WebSocket } from 'ws';
-import { getClaimedThreads, createClaimedThread, deleteClaimedThread } from './db.js';
+import { getClaimedThreads, createClaimedThread, deleteClaimedThread, initDatabase } from './db.js';
 import { extractDisplayNameFromEPFLEmail } from './util.js';
+
+initDatabase();
 
 const wss = new WebSocketServer({ port: process.env.PORT || 3000 });
 
