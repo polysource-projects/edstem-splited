@@ -20,4 +20,4 @@ COPY ./server/* ./
 EXPOSE 3000
 
 # Start the server
-CMD ["pnpm", "start"]
+CMD ["node", "index.js"]
