@@ -67,6 +67,7 @@ function createWs() {
     function pageCheck () {
         console.log('Checking for claims...');
         const regex = /edstem.org\/eu\/courses\/([0-9]+)\/discussion\/([0-9]+)/;
+        if (!regex.test(currentPage)) return;
         const match = currentPage.match(regex);
         const courseId = match[1];
         const threadId = match[2];
