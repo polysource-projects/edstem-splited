@@ -1,7 +1,7 @@
 # SplitED
 
-Un userscript Violentmonkey pour communiquer aux autres étudiants que l'on a vu une question et que l'on est en train de rédiger une (peut-être longue) réponse.
-Cela permet d'éviter des doubles-réponses ou des pertes de temps.
+Un userscript Violentmonkey pour communiquer aux autres étudiants qu'une réponse à une question est déjà en train d'être rédigée.
+Cela permet d'éviter des pertes de temps (lorsqu'on passe 15 minutes pour écrire une réponse et qu'un autre étudiant répond "Oui.") et des doubles-réponses.
 
 ![claimed](./unclaimed.png)
 
