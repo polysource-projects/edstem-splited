@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SplitED
 // @namespace    violentmonkey
-// @version      1.3
+// @version      1.4
 // @description  SplitED
 // @author       violentmonkey
 // @match        https://edstem.org/*
@@ -93,27 +93,27 @@ function createWs() {
         if (claim && claim.userEmail !== localStorage.getItem('lastEmail')) {
             publishedButton.textContent = 'Publier tout de même';
             publishedButton.classList = 'ed-button ed-focus-outline ed-button-danger';
-            claimButton.textContent = `Claimed by ${claim.userDisplayName}`;
+            claimButton.textContent = `Taken by ${claim.userDisplayName}`;
             claimButton.classList = 'ed-button ed-focus-outline ed-button-danger';
             claimButton.disabled = true;
         }
         else if (claim) {
             publishedButton.textContent = 'Publier';
             publishedButton.classList = 'ed-button ed-focus-outline ed-button-primary';
-            claimButton.textContent = 'Annuler le claim';
+            claimButton.textContent = 'Libérer';
             claimButton.classList = "ed-button ed-focus-outline ed-button-danger";
             claimButton.disabled = false;
         } else {
             publishedButton.textContent = 'Publier';
             publishedButton.classList = 'ed-button ed-focus-outline ed-button-primary';
-            claimButton.textContent = 'Claim';
+            claimButton.textContent = 'Take';
             claimButton.classList = "ed-button ed-focus-outline ed-button-primary";
             claimButton.disabled = false;
         }
     
         claimButton.onclick = function() {
             console.log('claiming thread');
-            if (claimButton.textContent === 'Claim') {
+            if (claimButton.textContent === 'Take') {
                 console.log('claiming');
                 ws.send(JSON.stringify({
                     event: 'claim_thread',
@@ -123,7 +123,7 @@ function createWs() {
                     }
                 }));
             }
-            if (claimButton.textContent === 'Annuler le claim') {
+            if (claimButton.textContent === 'Libérer') {
                 console.log('unclaiming');
                 ws.send(JSON.stringify({
                     event: 'unclaim_thread',
