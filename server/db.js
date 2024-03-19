@@ -32,7 +32,7 @@ export async function initDatabase() {
             defaultValue: Sequelize.NOW
         }
     });
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
 }
 
 export function createClaimedThread(threadId, userEmail, userDisplayName) {
