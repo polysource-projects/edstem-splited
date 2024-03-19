@@ -25,9 +25,14 @@ export async function initDatabase() {
         userDisplayName: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        claimedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: Sequelize.NOW
         }
     });
-    await sequelize.sync();
+    await sequelize.sync({ force: true });
 }
 
 export function createClaimedThread(threadId, userEmail, userDisplayName) {
@@ -39,5 +44,12 @@ export function deleteClaimedThread(threadId) {
 }
 
 export function getClaimedThreads() {
-    return ClaimedThread.findAll();
+    // only for the past 2 days
+    return ClaimedThread.findAll({
+        where: {
+            claimedAt: {
+                [Sequelize.Op.gt]: new Date(new Date() - 1000 * 60 * 60 * 24 * 2)
+            }
+        }
+    });
 }
