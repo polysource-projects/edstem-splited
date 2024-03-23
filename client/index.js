@@ -47,7 +47,9 @@ function createWs() {
         if (data.event === 'claims_update') {
             claims = data.data;
             console.log(data);
-            pageCheck();
+
+            // wait until the page is completely loaded for the first update
+            waitForElm('.disrep-actions-buttons').then(pageCheck);
         }
     }
     
@@ -59,9 +61,7 @@ function createWs() {
         if (currentPage != location.href)
         {
             currentPage = location.href;
-            waitForElm('.disrep-actions-buttons').then((elm) => {
-                pageCheck();
-            });
+            waitForElm('.disrep-actions-buttons').then(pageCheck);
         }
     }, 500);
     
@@ -135,12 +135,6 @@ function createWs() {
             }
         }
     }
-    
-    // when the page is COMPLETELY loaded
-    waitForElm('.disrep-actions-buttons').then((elm) => {
-        pageCheck();
-    });
-
 
 
     ws.onclose = function close() {
