@@ -33,6 +33,8 @@ function createWs() {
 
     const ws = new WebSocket('wss://splited.polysource.ch');
 
+    const claimDivSelector = '.dissholay-body > .discuss-reply .disrep-actions-buttons';
+
     ws.onopen = function open() {
         ws.send(JSON.stringify({
             event: 'connected',
@@ -49,7 +51,7 @@ function createWs() {
             console.log(data);
 
             // wait until the page is completely loaded for the first update
-            waitForElm('.disrep-actions-buttons').then(pageCheck);
+            waitForElm(claimDivSelector).then(pageCheck);
         }
     }
     
@@ -61,7 +63,7 @@ function createWs() {
         if (currentPage != location.href)
         {
             currentPage = location.href;
-            waitForElm('.disrep-actions-buttons').then(pageCheck);
+            waitForElm(claimDivSelector).then(pageCheck);
         }
     }, 500);
     
@@ -80,7 +82,7 @@ function createWs() {
         const claim = claims.find(claim => claim.threadId === parseInt(threadId));
         console.log(claim);
     
-        const claimDiv = document.querySelector('.disrep-actions-buttons');
+        const claimDiv = document.querySelector(claimDivSelector);
         if (!claimDiv) return console.log('No claimDiv found');
         const publishedButton = claimDiv.children.length == 2 ? claimDiv.children[1] : claimDiv.children[0];
         publishedButton.id = 'pbt';
