@@ -20,7 +20,7 @@ wss.on('connection', async function connection(ws) {
         const data = JSON.parse(rawData);
         if (data.event === 'connected') {
             console.log('connected', data.data);
-            loggedEmails.add(data.data.userEmail);
+            loggedEmails.add(data.data);
             email = data.data;
         }
         if (data.event === 'claim_thread') {
