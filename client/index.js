@@ -68,7 +68,8 @@ function createWs() {
         if (currentPage != location.href)
         {
             currentPage = location.href;
-            waitForElm(claimDivSelector).then(pageCheck);
+            waitForElm(claimDivSelector).then(claimCheck);
+            waitForElm(loggedElSelector).then(loggedCheck);
         }
     }, 500);
     
