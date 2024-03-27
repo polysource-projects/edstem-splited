@@ -147,7 +147,7 @@ function createWs() {
         const regex = /edstem.org\/eu\/courses\/([0-9]+)\/discussion(\/([0-9]+))?/;
         if (!regex.test(currentPage)) return;
 
-        const loggedInStr = loggedIn.map(name => name).join(', ');
+        const loggedInStr = Array.from(loggedIn).map(name => name).join(', ');
 
         const existingSpan = document.querySelector('#edstem-online');
         if (existingSpan) {

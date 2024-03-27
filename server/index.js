@@ -59,17 +59,17 @@ wss.on('connection', async function connection(ws) {
         event: 'logged_in',
         data: Array.from(loggedEmails.entries().map(email => extractDisplayNameFromEPFLEmail(email)))
     }));
-});
 
-ws.on('close', () => {
-    console.log('client disconnected');
-    wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({
-                event: 'logged_in',
-                data: Array.from(loggedEmails)
-            }));
-        }
+    ws.on('close', () => {
+        console.log('client disconnected');
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    event: 'logged_in',
+                    data: Array.from(loggedEmails)
+                }));
+            }
+        });
     });
 });
 
