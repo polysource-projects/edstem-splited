@@ -43,7 +43,7 @@ function createWs() {
         }));
     }
     let claims = [];
-    let loggedIn = new Set(localStorage.getItem('lastEmail'));
+    let loggedIn = new Set();
 
     ws.onmessage = function incoming(event) {
         console.log('received', event.data?.length + 'claims');
