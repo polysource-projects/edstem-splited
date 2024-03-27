@@ -22,6 +22,14 @@ wss.on('connection', async function connection(ws) {
             console.log('connected', data.data);
             loggedEmails.add(data.data);
             email = data.data;
+            wss.clients.forEach(client => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({
+                        event: 'logged_in',
+                        data: Array.from(loggedEmails.values()).map(email => extractDisplayNameFromEPFLEmail(email))
+                    }));
+                }
+            });
         }
         if (data.event === 'claim_thread') {
             console.log('claiming thread', data.data);
