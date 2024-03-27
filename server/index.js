@@ -58,13 +58,15 @@ wss.on('connection', async function connection(ws) {
         data: await getClaimedThreads()
     }));
 
-    ws.send(JSON.stringify({
-        event: 'logged_in',
-        data: Array.from(loggedEmails.values()).map(email => extractDisplayNameFromEPFLEmail(email))
-    }));
+    setTimeout(() => {
+        ws.send(JSON.stringify({
+            event: 'logged_in',
+            data: Array.from(loggedEmails.values()).map(email => extractDisplayNameFromEPFLEmail(email))
+        }));
+    }, 2_000);
 
     ws.on('close', () => {
-        console.log('client disconnected');
+        console.log(email + ' disconnected');
         loggedEmails.delete(email);
         wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) {
