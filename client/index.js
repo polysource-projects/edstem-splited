@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SplitED
 // @namespace    violentmonkey
-// @version      1.5
+// @version      1.7
 // @description  SplitED
 // @author       violentmonkey
 // @match        https://edstem.org/*
@@ -33,6 +33,9 @@ function createWs() {
 
     const ws = new WebSocket('wss://splited.polysource.ch');
 
+    const claimDivSelector = '.dissholay-body > .discuss-reply .disrep-actions-buttons';
+    const loggedElSelector = '#sprite-person';
+
     ws.onopen = function open() {
         ws.send(JSON.stringify({
             event: 'connected',
@@ -48,10 +51,12 @@ function createWs() {
         if (data.event === 'claims_update') {
             claims = data.data;
             console.log(data);
-            claimCheck();
+            waitForElm(claimDivSelector).then(claimCheck);
         }
         if (data.event === 'logged_in') {
             console.log('logged in', data.data);
+            loggedIn = new Set(data.data);
+            waitForElm(loggedElSelector).then(loggedCheck);
         }
     }
     
@@ -63,9 +68,7 @@ function createWs() {
         if (currentPage != location.href)
         {
             currentPage = location.href;
-            waitForElm('.disrep-actions-buttons').then((elm) => {
-                claimCheck();
-            });
+            waitForElm(claimDivSelector).then(pageCheck);
         }
     }, 500);
     
@@ -84,7 +87,7 @@ function createWs() {
         const claim = claims.find(claim => claim.threadId === parseInt(threadId));
         console.log(claim);
     
-        const claimDiv = document.querySelector('.disrep-actions-buttons');
+        const claimDiv = document.querySelector(claimDivSelector);
         if (!claimDiv) return console.log('No claimDiv found');
         const publishedButton = claimDiv.children.length == 2 ? claimDiv.children[1] : claimDiv.children[0];
         publishedButton.id = 'pbt';
@@ -177,15 +180,8 @@ function createWs() {
             document.querySelector('.edstem-online').append(span);
         }
     }
-    
-    // when the page is COMPLETELY loaded
-    waitForElm('.disrep-actions-buttons').then((elm) => {
-        claimCheck();
-    });
 
-    waitForElm('#sprite-person').then((elm) => {
-        loggedCheck();
-    });
+    waitForElm(loggedElSelector).then(loggedCheck);
 
     ws.onclose = function close() {
         console.log('disconnected');
