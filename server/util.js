@@ -3,5 +3,6 @@ function capitalizeFirstLetter(string) {
 }
 
 export function extractDisplayNameFromEPFLEmail(email) {
+    console.log('extractDisplayNameFromEPFLEmail', email);
     return capitalizeFirstLetter(email.split('@')[0].split('.')[0]);
 }

@@ -14,11 +14,14 @@ const loggedEmails = new Set();
 wss.on('connection', async function connection(ws) {
     ws.on('error', console.error);
 
+    let email;
+
     ws.on('message', async function message(rawData) {
         const data = JSON.parse(rawData);
         if (data.event === 'connected') {
             console.log('connected', data.data);
             loggedEmails.add(data.data.userEmail);
+            email = data.data;
         }
         if (data.event === 'claim_thread') {
             console.log('claiming thread', data.data);
@@ -62,6 +65,7 @@ wss.on('connection', async function connection(ws) {
 
     ws.on('close', () => {
         console.log('client disconnected');
+        loggedEmails.delete(email);
         wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify({
