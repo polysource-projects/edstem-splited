@@ -50,6 +50,8 @@ export function getClaimedThreads() {
             claimedAt: {
                 [Sequelize.Op.gt]: new Date(new Date() - 1000 * 60 * 60 * 24 * 2)
             }
-        }
+        },
+        order: [['claimedAt', 'DESC']],
+        limit: 20
     });
 }
