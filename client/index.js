@@ -40,6 +40,7 @@ function createWs() {
         }));
     }
     let claims = [];
+    let loggedIn = new Set();
 
     ws.onmessage = function incoming(event) {
         console.log('received', event.data);
@@ -47,7 +48,10 @@ function createWs() {
         if (data.event === 'claims_update') {
             claims = data.data;
             console.log(data);
-            pageCheck();
+            claimCheck();
+        }
+        if (data.event === 'logged_in') {
+            console.log('logged in', data.data);
         }
     }
     
@@ -60,12 +64,12 @@ function createWs() {
         {
             currentPage = location.href;
             waitForElm('.disrep-actions-buttons').then((elm) => {
-                pageCheck();
+                claimCheck();
             });
         }
     }, 500);
     
-    function pageCheck () {
+    function claimCheck () {
         console.log('Checking for claims...');
         const regex = /edstem.org\/eu\/courses\/([0-9]+)\/discussion\/([0-9]+)/;
         if (!regex.test(currentPage)) return;
@@ -135,13 +139,53 @@ function createWs() {
             }
         }
     }
+
+    function loggedCheck() {
+        const regex = /edstem.org\/eu\/courses\/([0-9]+)\/discussion(\/([0-9]+))?/;
+        if (!regex.test(currentPage)) return;
+
+        const loggedInStr = loggedIn.map(name => name).join(', ');
+
+        const existingSpan = document.querySelector('#edstem-online');
+        if (existingSpan) {
+            existingSpan.textContent = loggedInStr;
+        } else {
+
+            const div = document.querySelector('.dsbc-online');
+            const duplicatedDiv = div.cloneNode(true);
+            duplicatedDiv.classList.add('edstem-online');
+            duplicatedDiv.removeChild(duplicatedDiv.children[0]);
+            duplicatedDiv.removeChild(duplicatedDiv.children[0]);
+            /*const svgSpan = document.createElement('span');
+            svgSpan.classList.add('dsbc-online-icon', 'icon', 'icon-person');
+            const svg = document.createElement('svg');
+            svg.setAttribute('viewBox', '0 0 24 24');
+            svg.setAttribute('fill', 'currentColor');
+            // add path
+            const path = document.createElement('path');
+            path.setAttribute('d', 'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z');
+            svg.appendChild(path);
+            svgSpan.appendChild(svg);
+            duplicatedDiv.prepend(svgSpan);*/
+
+            const insertingDiv = document.querySelector('.discuss-sidebar-container');
+            insertingDiv.append(duplicatedDiv);
+
+            const span = document.createElement('span');
+            span.id = 'edstem-online';
+            span.textContent = loggedInStr;
+            document.querySelector('.edstem-online').append(span);
+        }
+    }
     
     // when the page is COMPLETELY loaded
     waitForElm('.disrep-actions-buttons').then((elm) => {
-        pageCheck();
+        claimCheck();
     });
 
-
+    waitForElm('#sprite-person').then((elm) => {
+        loggedCheck();
+    });
 
     ws.onclose = function close() {
         console.log('disconnected');

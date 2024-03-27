@@ -9,6 +9,8 @@ initDatabase();
 
 const wss = new WebSocketServer({ port: process.env.PORT || 3000 });
 
+const loggedEmails = new Set();
+
 wss.on('connection', async function connection(ws) {
     ws.on('error', console.error);
 
@@ -16,6 +18,7 @@ wss.on('connection', async function connection(ws) {
         const data = JSON.parse(rawData);
         if (data.event === 'connected') {
             console.log('connected', data.data);
+            loggedEmails.add(data.data.userEmail);
         }
         if (data.event === 'claim_thread') {
             console.log('claiming thread', data.data);
@@ -51,6 +54,23 @@ wss.on('connection', async function connection(ws) {
         event: 'claims_update',
         data: await getClaimedThreads()
     }));
+
+    ws.send(JSON.stringify({
+        event: 'logged_in',
+        data: Array.from(loggedEmails.entries().map(email => extractDisplayNameFromEPFLEmail(email)))
+    }));
+});
+
+ws.on('close', () => {
+    console.log('client disconnected');
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+                event: 'logged_in',
+                data: Array.from(loggedEmails)
+            }));
+        }
+    });
 });
 
 process.on('unhandledRejection', (reason, promise) => {
