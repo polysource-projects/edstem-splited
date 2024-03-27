@@ -80,7 +80,7 @@ wss.on('connection', async function connection(ws) {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify({
                     event: 'logged_in',
-                    data: Array.from(loggedEmails)
+                    data: Array.from(loggedEmails.values()).map(email => extractDisplayNameFromEPFLEmail(email))
                 }));
             }
         });
