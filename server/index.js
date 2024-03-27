@@ -57,7 +57,7 @@ wss.on('connection', async function connection(ws) {
 
     ws.send(JSON.stringify({
         event: 'logged_in',
-        data: Array.from(loggedEmails.entries().map(email => extractDisplayNameFromEPFLEmail(email)))
+        data: Array.from(loggedEmails.entries()).map(email => extractDisplayNameFromEPFLEmail(email))
     }));
 
     ws.on('close', () => {
