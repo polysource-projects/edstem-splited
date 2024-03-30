@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SplitED
 // @namespace    violentmonkey
-// @version      1.8
+// @version      1.9
 // @description  SplitED
 // @author       violentmonkey
 // @match        https://edstem.org/*
