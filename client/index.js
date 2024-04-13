@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SplitED
 // @namespace    violentmonkey
-// @version      1.8
+// @version      1.9
 // @description  SplitED
 // @author       violentmonkey
 // @match        https://edstem.org/*
@@ -148,7 +148,12 @@ function createWs() {
         const regex = /edstem.org\/eu\/courses\/([0-9]+)\/discussion(\/([0-9]+))?/;
         if (!regex.test(currentPage)) return;
 
-        const loggedInStr = Array.from(loggedIn).map(name => name).join(', ')  + " actuellement en ligne";
+        const loggedInArr = Array.from(loggedIn).map(name => name);
+        const loggedInStr = loggedInArr.slice(0, -1).join(', ')
+            + (loggedIn.size > 1 ? " et " : "")
+            + loggedInArr[loggedInArr.length - 1]
+            + (loggedIn.size > 1 ? " sont" : " est")
+            + " actuellement en ligne";
 
         const existingSpan = document.querySelector('#edstem-online');
         if (existingSpan) {
