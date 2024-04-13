@@ -42,7 +42,7 @@ wss.on('connection', async function connection(ws) {
         const data = JSON.parse(rawData);
         if (data.event === 'connected') {
             console.log('connected', data.data);
-            connectionEmails.set(ws, email);
+            connectionEmails.set(ws, data.data);
             notifyLoggedIn();
         }
         if (data.event === 'claim_thread') {
