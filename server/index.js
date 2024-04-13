@@ -65,7 +65,7 @@ wss.on('connection', async function connection(ws) {
     setTimeout(() => notifyLoggedIn(), 2_000);
 
     ws.on('close', () => {
-        console.log(email + ' disconnected');
+        console.log(connectionEmails.get(ws) + ' disconnected');
         connectionEmails.delete(ws);
         notifyLoggedIn();
     });
