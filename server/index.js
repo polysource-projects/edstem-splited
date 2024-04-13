@@ -9,55 +9,51 @@ initDatabase();
 
 const wss = new WebSocketServer({ port: process.env.PORT || 3000 });
 
-const loggedEmails = new Set();
+const connectionEmails = new Map();
+
+const notifyLoggedIn = () => {
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+                event: 'logged_in',
+                data: Array.from(new Set(connectionEmails.values())).map(email => extractDisplayNameFromEPFLEmail(email))
+            }));
+        }
+    });
+}
+
+const notifyClaims = async () => {
+    const claims = await getClaimedThreads();
+    wss.clients.forEach(client => {
+        console.log('sending update to client');
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+                event: 'claims_update',
+                data: claims
+            }));
+        }
+    });
+}
 
 wss.on('connection', async function connection(ws) {
     ws.on('error', console.error);
-
-    let email;
 
     ws.on('message', async function message(rawData) {
         const data = JSON.parse(rawData);
         if (data.event === 'connected') {
             console.log('connected', data.data);
-            loggedEmails.add(data.data);
-            email = data.data;
-            wss.clients.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        event: 'logged_in',
-                        data: Array.from(loggedEmails.values()).map(email => extractDisplayNameFromEPFLEmail(email))
-                    }));
-                }
-            });
+            connectionEmails.set(ws, email);
+            notifyLoggedIn();
         }
         if (data.event === 'claim_thread') {
             console.log('claiming thread', data.data);
             await createClaimedThread(data.data.threadId, data.data.userEmail, extractDisplayNameFromEPFLEmail(data.data.userEmail));
-            const claims = await getClaimedThreads();
-            wss.clients.forEach(client => {
-                console.log('sending update to client');
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        event: 'claims_update',
-                        data: claims
-                    }));
-                }
-            });
+            notifyClaims();
         }
         if (data.event === 'unclaim_thread') {
             console.log('unclaiming thread', data.data);
             await deleteClaimedThread(data.data.threadId);
-            const claims = await getClaimedThreads();
-            wss.clients.forEach(client => {
-                console.log('sending update to client');
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        event: 'claims_update',
-                        data: claims
-                    }));
-                }
-            });
+            notifyClaims();
         }
     });
 
@@ -66,24 +62,12 @@ wss.on('connection', async function connection(ws) {
         data: await getClaimedThreads()
     }));
 
-    setTimeout(() => {
-        ws.send(JSON.stringify({
-            event: 'logged_in',
-            data: Array.from(loggedEmails.values()).map(email => extractDisplayNameFromEPFLEmail(email))
-        }));
-    }, 2_000);
+    setTimeout(() => notifyLoggedIn(), 2_000);
 
     ws.on('close', () => {
         console.log(email + ' disconnected');
-        loggedEmails.delete(email);
-        wss.clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({
-                    event: 'logged_in',
-                    data: Array.from(loggedEmails.values()).map(email => extractDisplayNameFromEPFLEmail(email))
-                }));
-            }
-        });
+        connectionEmails.delete(ws);
+        notifyLoggedIn();
     });
 });
 
