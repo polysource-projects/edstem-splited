@@ -19,5 +19,4 @@ Quelqu'un dans le groupe souhaite déjà répondre à la question et est en trai
 
 * vous devez disposer d'un gestionnaire de scripts, comme ViolentMonkey
 * si vous souhaitez disposer des MaJ en temps réel, importez depuis l'URL, sinon importez depuis le fichier .js
-* `https://raw.githubusercontent.com/polysource-projects/edstem-splited/master/client/index.js`
-* 
+* L'URL : `https://raw.githubusercontent.com/polysource-projects/edstem-splited/master/client/index.js`
